@@ -1,10 +1,9 @@
-import express from "express";
-import db from "./config/Database.js"
-import router from "./routes/routes.js";
-import dotenv from "dotenv";
-// import Users from "./models/userModel.js";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+const express = require("express")
+const router = require("./routes/routes.js")
+const dotenv = require("dotenv")
+// const Users = require("./models/userModel.js")
+const cookieParser = require("cookie-parser")
+const cors = require("cors")
 
 dotenv.config();
 
@@ -12,8 +11,8 @@ const app = express();
 const port = 5000;
 
 try {
-    await db.authenticate();
-    console.log('Database Connected');
+    // await db.authenticate();
+    // console.log('Database Connected');
     //ketika tidak memiliki tabel di db, maka sequelize akan menggenerate secara auto
     // await Users.sync();
 } catch (error) {

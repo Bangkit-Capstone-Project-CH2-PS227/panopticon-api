@@ -1,22 +1,23 @@
-import { generateRoom, Users } from "../models/userModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { nanoid } from "nanoid";
+const db = require("./../models");
+const generateRoom = ''
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { nanoid } = require("nanoid");
 
-export const getUsers = async(req, res) => {
+const getUsers = async (req, res) => {
     try {
-        const users = await Users.findAll({
-            attributes:['id', 'name', 'email']
+        const users = await db.User.findAll({
+            attributes: ['id', 'name', 'email']
         })
-         res.json(users);
+        res.json(users);
     } catch (error) {
         console.log(error)
     }
 }
 
-export const register = async(req, res) => {
-    const { name, email, password, confirmPass} = req.body;
-    if(password !== confirmPass) {
+const register = async (req, res) => {
+    const { name, email, password, confirmPass } = req.body;
+    if (password !== confirmPass) {
         return res.status(400).json({
             msg: "Password dan Confirm password tidak cocok"
         })
@@ -25,7 +26,7 @@ export const register = async(req, res) => {
     const hashPass = await bcrypt.hash(password, salt);
 
     try {
-        await Users.create({
+        await db.User.create({
             name: name,
             email: email,
             password: hashPass
@@ -39,70 +40,73 @@ export const register = async(req, res) => {
 
 }
 
-export const login = async(req, res) => {
+const login = async (req, res) => {
     try {
-        const user = await Users.findAll({
-            where:{
+        const user = await db.User.findAll({
+            where: {
                 email: req.body.email
             }
         })
-         //ngambil index ke-nol karena single data
-         const match = await bcrypt.compare(req.body.password, user[0].password)
-         if(!match){
-             return res.status(400).json({
-                 msg: "Wrong Password"
-             });
-         }
-         const userId = user[0].id;
-         const name = user[0].name;
-         const email = user[0].email;
-         const accessToken = jwt.sign({
+        //ngambil index ke-nol karena single data
+        const match = await bcrypt.compare(req.body.password, user[0].password)
+        if (!match) {
+            return res.status(400).json({
+                msg: "Wrong Password"
+            });
+        }
+        const userId = user[0].id;
+        const name = user[0].name;
+        const email = user[0].email;
+        const accessToken = jwt.sign({
             userId, name, email
-         }, process.env.ACCESS_TOKEN_SECRET, {
+        }, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: '20s'
-         });
-         const refreshToken = jwt.sign({
+        });
+        console.log(1)
+        const refreshToken = jwt.sign({
             userId, name, email
-         }, process.env.REFRESH_TOKEN_SECRET, {
+        }, process.env.REFRESH_TOKEN_SECRET, {
             expiresIn: '1d'
-         });
-         await Users.update({
+        });
+        console.log(refreshToken)
+        await db.User.update({
             refresh_token: refreshToken
-         }, {
-            where:{
+        }, {
+            where: {
                 id: userId
             }
-         })
-         res.cookie('refreshToken', refreshToken, {
+        })
+        res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
             // apabila mau jadi https 
             //secure: true
-         })
-         res.json({accessToken})
+        })
+        res.json({ accessToken })
     } catch (error) {
+        console.log(error.message)
         res.status(404).json({
-            msg:"Email tidak ditemukan"
+            msg: "Email tidak ditemukan"
         })
     }
 }
 
-export const logout = async(req, res) => {
+const logout = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-    if(!refreshToken){
+    if (!refreshToken) {
         return res.sendStatus(204);
     }
-    const user = await Users.findAll({
-        where:{
+    const user = await db.User.findAll({
+        where: {
             refresh_token: refreshToken
         }
     });
-    if(!user[0]){
+    if (!user[0]) {
         return res.sendStatus(204);
     }
     const userId = user[0].id;
-    await Users.update({refreshToken: null}, {
-        where:{
+    await db.User.update({ refreshToken: null }, {
+        where: {
             id: userId
         }
     });
@@ -110,25 +114,25 @@ export const logout = async(req, res) => {
     return res.sendStatus(200);
 }
 
-export const createRoom = async(req, res) => {
+const createRoom = async (req, res) => {
     const { nameRoom } = req.body;
     const roomToken = nanoid(7);
     const refreshToken = req.cookies.refreshToken;
-    const user = await Users.findAll({
-        where:{
+    const user = await db.User.findAll({
+        where: {
             refresh_token: refreshToken
         }
     });
     const username = user[0].name;
 
-    await Users.findAll( {
-        where:{
+    await db.User.findAll({
+        where: {
             name: username
         }
     });
-    
+
     try {
-        await generateRoom.create({
+        await db.Room.create({
             name_room: nameRoom,
             tokenRoom: roomToken,
             username: username
@@ -142,8 +146,17 @@ export const createRoom = async(req, res) => {
     }
 }
 
-export const landingPage = async(req, res) => {
+const landingPage = async (req, res) => {
     res.json({
         msg: 'Selamat datang di Panopticon'
     })
 }
+
+module.exports = {
+    getUsers,
+    register,
+    login,
+    logout,
+    createRoom,
+    landingPage
+};
