@@ -17,7 +17,7 @@ try {
     //ketika tidak memiliki tabel di db, maka sequelize akan menggenerate secara auto
     // await Users.sync();
 } catch (error) {
-    console.error(err);
+    console.error(error);
 }
 
 app.use(cors({credentials:true, origin:`http://localhost${port}`}));
