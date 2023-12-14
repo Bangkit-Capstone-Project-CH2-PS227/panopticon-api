@@ -1,1 +1,1 @@
-# REST API Panopticon
+# panopticon-api
