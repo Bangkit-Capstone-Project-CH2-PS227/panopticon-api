@@ -1,6 +1,7 @@
-import Users from "../models/userModel.js";
+import { generateRoom, Users } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
 
 export const getUsers = async(req, res) => {
     try {
@@ -107,4 +108,42 @@ export const logout = async(req, res) => {
     });
     res.clearCookie('refreshToken');
     return res.sendStatus(200);
+}
+
+export const createRoom = async(req, res) => {
+    const { nameRoom } = req.body;
+    const roomToken = nanoid(7);
+    const refreshToken = req.cookies.refreshToken;
+    const user = await Users.findAll({
+        where:{
+            refresh_token: refreshToken
+        }
+    });
+    const username = user[0].name;
+
+    await Users.findAll( {
+        where:{
+            name: username
+        }
+    });
+    
+    try {
+        await generateRoom.create({
+            name_room: nameRoom,
+            tokenRoom: roomToken,
+            username: username
+        })
+        console.log(nameRoom)
+        res.json({
+            msg: 'Berhasil membuat room'
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const landingPage = async(req, res) => {
+    res.json({
+        msg: 'Selamat datang di Panopticon'
+    })
 }

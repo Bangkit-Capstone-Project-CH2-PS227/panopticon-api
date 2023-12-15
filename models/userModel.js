@@ -3,7 +3,7 @@ import db from "../config/Database.js"
 
 const { DataTypes } = Sequelize;
 
-const Users = db.define('users', {
+export const Users = db.define('users', {
     name:{
         type: DataTypes.STRING
     },
@@ -20,4 +20,19 @@ const Users = db.define('users', {
     freezeTableName: true
 })
 
-export default Users;
+export const generateRoom = db.define('rooms', {
+    tokenRoom: {
+        type: DataTypes.STRING
+    },
+    name_room: {
+        type: DataTypes.STRING
+    },
+    username:{
+        type: DataTypes.STRING
+    },
+})
+
+export default {
+    Users,
+    generateRoom
+};
