@@ -31,8 +31,3 @@ export const generateRoom = db.define('rooms', {
         type: DataTypes.STRING
     },
 })
-
-export default {
-    Users,
-    generateRoom
-};
