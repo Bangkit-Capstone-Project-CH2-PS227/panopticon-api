@@ -5,13 +5,23 @@ const { DataTypes } = Sequelize;
 
 export const Users = db.define('users', {
     name:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     email:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        isEmail: true,
     },
     password:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: {
+                args: [8, 30],
+            }
+        }
     },
     refresh_token:{
         type: DataTypes.TEXT
