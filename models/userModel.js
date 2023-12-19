@@ -19,7 +19,7 @@ export const Users = db.define('users', {
         allowNull: false,
         validate: {
             len: {
-                args: [8, 30],
+                args: [8, 255],
             }
         }
     },
