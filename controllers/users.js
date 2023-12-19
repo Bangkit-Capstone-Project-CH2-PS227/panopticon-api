@@ -1,5 +1,5 @@
 import { generateRoom, Users } from "../models/userModel.js";
-import bcrypt from "bcrypt";
+import bcyrptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 
@@ -21,8 +21,8 @@ export const register = async(req, res) => {
     //         msg: "Password dan Confirm password tidak cocok"
     //     })
     // }
-    const salt = await bcrypt.genSalt();
-    const hashPass = await bcrypt.hash(password, salt);
+    const salt = await bcyrptjs.genSalt();
+    const hashPass = await bcyrptjs.hash(password, salt);
     try {    
         await Users.create({
             name: name,
@@ -59,7 +59,7 @@ export const login = async(req, res) => {
             }
         })
          //ngambil index ke-nol karena single data
-         const match = await bcrypt.compare(req.body.password, user[0].password)
+         const match = await bcyrptjs.compare(req.body.password, user[0].password)
          if(!match){
              return res.status(400).json({
                  msg: "Wrong Password"
