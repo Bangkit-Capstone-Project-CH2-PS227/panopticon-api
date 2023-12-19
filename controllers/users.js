@@ -15,13 +15,12 @@ export const getUsers = async(req, res) => {
 }
 
 export const register = async(req, res) => {
-    const { name, email, password, confirmPass} = req.body;
-    if(password !== confirmPass) {
-        return res.status(400).json({
-            msg: "Password dan Confirm password tidak cocok"
-        })
-    }
-    console.log("password", password);
+    const { name, email, password} = req.body;
+    // if(password !== confirmPass) {
+    //     return res.status(400).json({
+    //         msg: "Password dan Confirm password tidak cocok"
+    //     })
+    // }
     const salt = await bcrypt.genSalt();
     const hashPass = await bcrypt.hash(password, salt);
     try {    
@@ -34,7 +33,20 @@ export const register = async(req, res) => {
             msg: "Register berhasil"
         })
     } catch (error) {
-        console.log(error);
+        if(error.name === 'SequelizeUniqueConstraintError') {
+            res.status(403); 
+            res.send({
+                message: "Nama sudah ada"
+        })} else if (password.length < 8){
+            res.send({
+                message: "Password minimal 8 karakter"
+        })}else if (password.length > 30){
+            res.send({
+                message: "Password maksimal 30 karakter"
+        })} else {
+            res.status(500)
+            res.send({ message: "Something went wrong"});
+        }
     }
 
 }
@@ -144,6 +156,6 @@ export const createRoom = async(req, res) => {
 
 export const landingPage = async(req, res) => {
     res.json({
-        msg: 'Selamat datang di Panopticon'
+        msg: `Selamat datang di Panopticon! Effortless Protection Meets Intuitive Learning`
     })
 }
