@@ -14,3 +14,5 @@ $ npm run start-prod
 ```
 $ npm run start-dev
 ```
+### Dokumentasi
+[Dokumentasi API](https://documenter.getpostman.com/view/23711788/2s9YkocMBi)
