@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# panopticon-api
-=======
 # Node.js
 ## Getting Started
 
