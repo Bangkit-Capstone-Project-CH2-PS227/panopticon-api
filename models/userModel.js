@@ -32,6 +32,7 @@ export const generateRoom = db.define('rooms', {
     },
 })
 
+
 export const memberLogs = db.define('memberLogs', {
     id: {
         type: DataTypes.INTEGER,
@@ -55,8 +56,3 @@ export const memberLogs = db.define('memberLogs', {
     }}, 
 )
 
-export default {
-    Users,
-    generateRoom, 
-    memberLogs
-};
