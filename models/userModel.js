@@ -42,8 +42,7 @@ export const generateRoom = db.define('rooms', {
     },
 })
 
-
-export const memberLogs = db.define('memberLogs', {
+export const memberlogs = db.define('memberlogs', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -63,6 +62,17 @@ export const memberLogs = db.define('memberLogs', {
     }, 
     status : {
         type: DataTypes.STRING
-    }}, 
+    }, 
+    createdAt: {
+        type: DataTypes.DATE,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+    },}, 
 )
 
+export default {
+    Users,
+    generateRoom, 
+    memberlogs
+};

@@ -1,4 +1,4 @@
-import { generateRoom, Users, memberLogs } from "../models/userModel.js";
+import { generateRoom, Users, memberlogs } from "../models/userModel.js";
 
 const memberList = [];
 
@@ -32,34 +32,44 @@ export const inputRoomToken = async (req, res) => {
       });
     }
 
-    // const cekStatus //ntar kita cek statusnya itu hasilnya 0 / 1
-    // // 0 -> nggk keliatan
-    // // 1 -> keliatan 
-
     const userInRoom = memberList.find((member) => member.userId === user.id);
-    if (!userInRoom) {
-      memberList.push({ //(data member room)
-        userId: user.id,
-        username: user.name, // nama orang yang join (Secara keseluruhan)
-        status: "1",
-        joined_at: new Date(),
-        //return an bentuknya waktu timernya hmhmmmm 
+    if (userInRoom) {
+      // If the user is already in the room, return an alert
+      return res.json({
+        msg: "Room Token Sudah Pernah Di inputkan",
+        roomToken,
+        nameRoom: existingRoom.name_room,
+        user: {
+          memberList,
+        },
       });
-
-      //masukkan ke dalam database
-      await memberLogs.create({
-        nameRoom: existingRoom.name_room,  
-        roomToken: roomToken, 
-        member: user.name,
-        status: "1",
-        joined_at: new Date(), 
-      })
     }
+
+    //sementara
+    let userStatus = 0; //ini dari mana? ubah jadi nggk const
+    const status = userStatus === 1 ? "User terlihat" : "User tidak terlihat"; //diganti loop
+
+    memberList.push({ //(data member room)
+      userId: user.id,
+      username: user.name, // nama orang yang join (Secara keseluruhan)
+      status: status,
+      joined_at: new Date(),
+      //return an bentuknya waktu timernya hmhmmmm 
+    });
+
+    //masukkan ke dalam database
+    await memberlogs.create({
+      nameRoom: existingRoom.name_room,  
+      roomToken: roomToken, 
+      member: user.name,
+      status: status,
+      joined_at: new Date(), 
+    });
 
     res.json({
       msg: "Berhasil masuk room",
       roomToken,
-      nameRoom:existingRoom.name_room,
+      nameRoom: existingRoom.name_room,
       user: {
         memberList,
       },
