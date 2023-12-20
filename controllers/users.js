@@ -145,9 +145,12 @@ export const createRoom = async(req, res) => {
             tokenRoom: roomToken,
             username: username
         })
-        console.log(nameRoom)
+        // console.log(nameRoom)
         res.json({
-            msg: 'Berhasil membuat room'
+            msg: `berhasil membuat room`,
+            username: username,
+            name_room: nameRoom,
+            token_room: roomToken,
         })
     } catch (error) {
         console.log(error)
