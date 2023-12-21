@@ -1,4 +1,4 @@
-import { generateRoom, Users } from "../models/userModel.js";
+import { generateRoom, Users, memberlogs } from "../models/userModel.js";
 import bcyrptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
@@ -71,7 +71,7 @@ export const login = async(req, res) => {
          const accessToken = jwt.sign({
             userId, name, email
          }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '20s'
+            expiresIn: '30d'
          });
          const refreshToken = jwt.sign({
             userId, name, email
@@ -91,7 +91,10 @@ export const login = async(req, res) => {
             // apabila mau jadi https 
             //secure: true
          })
-         res.json({accessToken})
+         res.json({
+            username: name,
+            email: email,
+            accessToken: accessToken})
     } catch (error) {
         res.status(404).json({
             msg:"Email tidak ditemukan"
@@ -131,19 +134,27 @@ export const createRoom = async(req, res) => {
             refresh_token: refreshToken
         }
     });
-    const username = user[0].name;
+    const superviseUser = user[0].name;
 
     await Users.findAll( {
         where:{
-            name: username
+            name: superviseUser
         }
     });
+
+    // const 
+
+    // const roomMember = await memberlogs.findOne({
+    //     where: {
+            
+    //     }
+    // })
     
     try {
         await generateRoom.create({
             name_room: nameRoom,
             tokenRoom: roomToken,
-            username: username
+            username: superviseUser
         })
         // console.log(nameRoom)
         res.json({
